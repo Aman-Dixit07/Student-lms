@@ -1,0 +1,93 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// User Model (Students & Instructors)
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(STUDENT)
+  createdAt DateTime @default(now())
+
+  // Relations
+  coursesCreated Course[]     @relation("InstructorCourses")
+  enrollments    Enrollment[]
+  progress       Progress[]
+}
+
+enum Role {
+  STUDENT
+  INSTRUCTOR
+}
+
+// Course Model
+model Course {
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  instructorId String
+  thumbnailUrl String?
+  createdAt    DateTime @default(now())
+
+  // Relations
+  instructor  User         @relation("InstructorCourses", fields: [instructorId], references: [id], onDelete: Cascade)
+  lessons     Lesson[]
+  enrollments Enrollment[]
+}
+
+// Lesson Model (Video or PDF)
+model Lesson {
+  id           String   @id @default(uuid())
+  title        String
+  description  String?
+  contentType  String   // "video" or "pdf"
+  contentUrl   String?  // Cloudinary URL for video or PDF
+  thumbnailUrl String?  // Thumbnail image URL
+  order        Int      // Lesson order in course
+  courseId     String
+  createdAt    DateTime @default(now())
+
+  // Relations
+  course   Course     @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  progress Progress[]
+}
+
+// Enrollment Model (Student enrolls in Course)
+model Enrollment {
+  id         String   @id @default(uuid())
+  studentId  String
+  courseId   String
+  enrolledAt DateTime @default(now())
+
+  // Relations
+  student User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course  Course @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, courseId])
+}
+
+// Progress Model (Student completes Lesson)
+model Progress {
+  id          String    @id @default(uuid())
+  studentId   String
+  lessonId    String
+  isCompleted Boolean   @default(true)
+  completedAt DateTime?
+  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime  @default(now())
+
+  // Relations
+  student User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  lesson  Lesson @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, lessonId])
+}
