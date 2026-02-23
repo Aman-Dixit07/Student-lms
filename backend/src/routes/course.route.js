@@ -15,20 +15,25 @@ const router = express.Router();
 
 //Courses public routes
 router.get("/", getAllCourses); //it is used for homePage
-router.get("/:id", getCourseById); //it is used for coursePage but with less details
 
-//For enrolled students
-router.get("/:id/full", protectRoute, getCourseWithLessons); //to show full course with lessons
-
-//For Instructors
-router.post("/", protectRoute, isInstructor, createCourse);
+//For Instructors (must be before /:id to avoid route shadowing)
 router.get(
   "/instructor/my-courses",
   protectRoute,
   isInstructor,
-  upload.single("thumbnail"),
   getInstructorCourses,
 );
+router.post(
+  "/",
+  protectRoute,
+  isInstructor,
+  upload.single("thumbnail"),
+  createCourse,
+);
+
+//Parameterized routes (after specific routes)
+router.get("/:id", getCourseById); //it is used for coursePage but with less details
+router.get("/:id/full", protectRoute, getCourseWithLessons); //to show full course with lessons
 router.put(
   "/:id",
   protectRoute,
