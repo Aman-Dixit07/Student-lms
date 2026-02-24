@@ -25,7 +25,7 @@ const allowedOrigin = frontendUrl.endsWith("/")
 
 app.use(
   cors({
-    origin: allowedOrigin,
+    origin: [allowedOrigin, "http://localhost:3000"],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   }),
