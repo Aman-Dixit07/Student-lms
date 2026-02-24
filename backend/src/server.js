@@ -17,9 +17,14 @@ const app = express();
 const Port = process.env.PORT || 3000;
 
 //middleware
+const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+const allowedOrigin = frontendUrl.endsWith("/")
+  ? frontendUrl.slice(0, -1)
+  : frontendUrl;
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "http://localhost:3000",
+    origin: allowedOrigin,
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   }),
