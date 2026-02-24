@@ -13,6 +13,7 @@ dotenv.config();
 
 //initialize app
 const app = express();
+app.set("trust proxy", 1); // Crucial for Railway/Vercel to allow Secure cookies behind load balancers
 
 const Port = process.env.PORT || 3000;
 
