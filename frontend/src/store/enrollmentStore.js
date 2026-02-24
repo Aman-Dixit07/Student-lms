@@ -2,6 +2,15 @@ import { create } from "zustand";
 import { enrollmentAPI } from "@/utils/api";
 import toast from "react-hot-toast";
 
+const getError = (error, fallback) => {
+  //For error handling
+  const d = error?.response?.data;
+  return (
+    (d?.details ? Object.values(d.details)[0]?.[0] : d?.message || d?.error) ||
+    fallback
+  );
+};
+
 const useEnrollmentStore = create((set, get) => ({
   // State
   enrolledCourses: [],
@@ -16,7 +25,7 @@ const useEnrollmentStore = create((set, get) => ({
       set({ enrolledCourses: data });
       return data;
     } catch (error) {
-      toast.error("Failed to load enrolled courses");
+      //error handled by backend
       return [];
     } finally {
       set({ isLoading: false });
@@ -29,11 +38,11 @@ const useEnrollmentStore = create((set, get) => ({
     try {
       await enrollmentAPI.enroll(courseId);
       toast.success("Enrolled successfully!");
-      // Refresh enrolled courses
+
       await get().fetchEnrolledCourses();
       return true;
     } catch (error) {
-      toast.error(error.response?.data?.error || "Failed to enroll");
+      toast.error(getError(error, "Failed to enroll"));
       return false;
     } finally {
       set({ isLoading: false });
@@ -48,7 +57,7 @@ const useEnrollmentStore = create((set, get) => ({
       set({ courseProgress: data });
       return data;
     } catch (error) {
-      toast.error("Failed to load progress");
+      //error handled by backend
       return null;
     } finally {
       set({ isLoading: false });
@@ -72,11 +81,6 @@ const useEnrollmentStore = create((set, get) => ({
   isEnrolled: (courseId) => {
     const { enrolledCourses } = get();
     return enrolledCourses.some((e) => e.course.id === courseId);
-  },
-
-  // Clear course progress
-  clearCourseProgress: () => {
-    set({ courseProgress: null });
   },
 }));
 

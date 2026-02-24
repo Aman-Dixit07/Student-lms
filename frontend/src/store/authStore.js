@@ -3,13 +3,37 @@ import { persist } from "zustand/middleware";
 import { authAPI } from "@/utils/api";
 import toast from "react-hot-toast";
 
+const getError = (error, fallback) => {
+  //For error handling
+  const d = error?.response?.data;
+  return (
+    (d?.details ? Object.values(d.details)[0]?.[0] : d?.message || d?.error) ||
+    fallback
+  );
+};
+
+//For authentication
 const useAuthStore = create(
   persist(
     (set) => ({
       authUser: null,
       token: null,
       isLoading: false,
+      isCheckingAuth: true,
 
+      checkAuth: async () => {
+        set({ isCheckingAuth: true });
+        try {
+          const res = await authAPI.profile();
+          set({ authUser: res.user });
+        } catch {
+          set({ authUser: null, token: null });
+        } finally {
+          set({ isCheckingAuth: false });
+        }
+      },
+
+      //signup
       signup: async (data) => {
         set({ isLoading: true });
         try {
@@ -18,13 +42,14 @@ const useAuthStore = create(
           toast.success("Account created successfully!");
           return true;
         } catch (error) {
-          toast.error(error.response?.data?.error || "Signup failed");
+          toast.error(getError(error, "Signup failed"));
           return false;
         } finally {
           set({ isLoading: false });
         }
       },
 
+      //login
       login: async (data) => {
         set({ isLoading: true });
         try {
@@ -33,17 +58,18 @@ const useAuthStore = create(
           toast.success("Login successful!");
           return true;
         } catch (error) {
-          toast.error(error.response?.data?.error || "Login failed");
+          toast.error(getError(error, "Login failed"));
           return false;
         } finally {
           set({ isLoading: false });
         }
       },
 
+      //login
       logout: async () => {
         try {
           await authAPI.logout();
-        } catch (error) {
+        } catch {
           // Ignore error, logout anyway
         }
         set({ authUser: null, token: null });
@@ -52,6 +78,7 @@ const useAuthStore = create(
     }),
     {
       name: "auth-storage",
+      partialize: (state) => ({ authUser: state.authUser, token: state.token }),
     },
   ),
 );

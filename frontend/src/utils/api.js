@@ -14,6 +14,10 @@ export const authAPI = {
     const res = await axiosInstance.post("/auth/logout");
     return res.data;
   },
+  profile: async () => {
+    const res = await axiosInstance.get("/auth/profile");
+    return res.data;
+  },
 };
 
 //courses api's
@@ -52,6 +56,10 @@ export const courseAPI = {
 export const lessonAPI = {
   getByCourse: async (courseId) => {
     const res = await axiosInstance.get(`/lessons/course/${courseId}`);
+    return res.data;
+  },
+  getById: async (id) => {
+    const res = await axiosInstance.get(`/lessons/${id}`);
     return res.data;
   },
   create: async (courseId, formData) => {
@@ -94,14 +102,10 @@ export const enrollmentAPI = {
   },
 };
 
-//dashboard api's
+//dashboard api's - here we only require instructor dashboard as only one is enough for now
 export const dashboardAPI = {
   instructor: async () => {
     const res = await axiosInstance.get("/dashboard/instructor");
-    return res.data;
-  },
-  student: async () => {
-    const res = await axiosInstance.get("/dashboard/student");
     return res.data;
   },
 };

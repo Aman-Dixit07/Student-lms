@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import useCourseStore from "@/store/courseStore";
+import useLessonStore from "@/store/lessonStore";
 import {
   Dialog,
   DialogContent,
@@ -24,7 +24,7 @@ import {
 import { PlusCircle } from "lucide-react";
 
 export default function AddLessonModal({ courseId, open, onOpenChange }) {
-  const { createLesson, isLoading } = useCourseStore();
+  const { createLesson, isLoading } = useLessonStore();
   const [formData, setFormData] = useState({
     title: "",
     description: "",

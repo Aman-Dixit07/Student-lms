@@ -16,7 +16,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { PlusCircle } from "lucide-react";
 
-export default function CreateCourseModal({ open, onOpenChange }) {
+export default function CreateCourseModal({ open, onOpenChange, hideTrigger }) {
   const { createCourse, isLoading } = useCourseStore();
   const [formData, setFormData] = useState({
     title: "",
@@ -36,7 +36,7 @@ export default function CreateCourseModal({ open, onOpenChange }) {
 
     const success = await createCourse(data);
     if (success) {
-      // Reset form
+      // reset form
       setFormData({ title: "", description: "" });
       setThumbnail(null);
       onOpenChange(false);
@@ -45,12 +45,14 @@ export default function CreateCourseModal({ open, onOpenChange }) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild>
-        <Button>
-          <PlusCircle className="h-4 w-4 mr-2" />
-          Create Course
-        </Button>
-      </DialogTrigger>
+      {!hideTrigger && (
+        <DialogTrigger asChild>
+          <Button>
+            <PlusCircle className="h-4 w-4 mr-2" />
+            Create Course
+          </Button>
+        </DialogTrigger>
+      )}
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Create New Course</DialogTitle>

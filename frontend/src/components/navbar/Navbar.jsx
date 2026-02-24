@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import useAuthStore from "@/store/authStore";
+import CreateCourseModal from "@/components/modals/CreateCourseModal";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -13,14 +14,11 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import {
-  GraduationCap,
-  LogOut,
-  LayoutDashboard,
-  PlusCircle,
-} from "lucide-react";
+import { useState } from "react";
+import { GraduationCap, LogOut, LayoutDashboard } from "lucide-react";
 
 export default function Navbar() {
+  const [createModalOpen, setCreateModalOpen] = useState(false);
   const { authUser, logout } = useAuthStore();
   const router = useRouter();
 
@@ -29,7 +27,7 @@ export default function Navbar() {
     router.push("/");
   };
 
-  // Get user initials for avatar
+  // Avatar initials for user
   const getUserInitials = () => {
     if (!authUser?.name) return "U";
     const names = authUser.name.split(" ");
@@ -46,7 +44,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <GraduationCap className="h-8 w-8 text-blue-600" />
-            <span className="text-xl font-bold text-gray-900">LearnHub</span>
+            <span className="text-xl font-bold text-gray-900">LearnNicely</span>
           </Link>
 
           {/* Right side - Auth buttons or User menu */}
@@ -65,16 +63,13 @@ export default function Navbar() {
 
                 {/* Create Course (Instructor only) */}
                 {authUser.role === "INSTRUCTOR" && (
-                  <Button
-                    onClick={() => router.push("/dashboard")}
-                    className="hidden sm:flex items-center gap-2"
-                  >
-                    <PlusCircle className="h-4 w-4" />
-                    Create Course
-                  </Button>
+                  <CreateCourseModal
+                    open={createModalOpen}
+                    onOpenChange={setCreateModalOpen}
+                  />
                 )}
 
-                {/* User Dropdown */}
+                {/* User dropdown */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <button className="flex items-center gap-2 focus:outline-none">

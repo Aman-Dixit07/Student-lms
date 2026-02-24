@@ -64,7 +64,7 @@ export const generateCertificate = (studentName, courseName) => {
   doc.text(`Issued on: ${date}`, 148.5, 165, { align: "center" });
 
   doc.setFontSize(10);
-  doc.text("LearnHub - Online Learning Platform", 148.5, 180, {
+  doc.text("LearnNicely - Online Learning Platform", 148.5, 180, {
     align: "center",
   });
 
