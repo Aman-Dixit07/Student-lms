@@ -41,7 +41,7 @@ A comprehensive, full-stack Learning Management System built for instructors to 
 
 The complete API Documentation for this project is available. You can find the **Postman Collection** included in this repository to test the endpoints locally:
 
-- [**`postman_collection.json`**](./Student LMS API.postman_collection.json)
+- [**`Student LMS API.postman_collection.json`**](./Student%20LMS%20API.postman_collection.json)
 
 ---
 
